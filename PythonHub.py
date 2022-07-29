@@ -65,6 +65,7 @@ def AppendPythonData(pythonDataFile):
 def UsePythonData(codeName):
     if codeName != "":
         try:
+            #this works, but requires file to be in the same folder
             module = importlib.import_module(codeName)
             print("fin")
         except:

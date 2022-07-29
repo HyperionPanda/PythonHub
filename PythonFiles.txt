@@ -1,3 +1,0 @@
-
-/Users/aidan/Desktop/GameRandomizer.py
-randomises games to choose from group
