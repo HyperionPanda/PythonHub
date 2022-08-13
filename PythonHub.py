@@ -1,11 +1,12 @@
 import os
+import sys
 import importlib
 # for importing at runtime
 
 #https://stackoverflow.com/questions/301134/how-to-import-a-module-given-its-name-as-string
 #https://docs.python.org/3/library/importlib.html#importlib.import_module
 
-
+fortest = False
 pythonDataFile = ""
 
 print("Welcome to the PythonHub, where all your python code can be run. In the input below, please include a file you want to be able to be imported and a description Otherwise, use the use section to use some code")
@@ -16,6 +17,7 @@ print("Welcome to the PythonHub, where all your python code can be run. In the i
 
 def CreatePythonData():
     global pythonDataFile
+    global fortest
     directorypath = os.getcwd()
     
     filepath = os.path.join(str(directorypath), 'PythonFiles.txt')
@@ -32,6 +34,7 @@ def CreatePythonData():
     
     newfile.close()
     pythonDataFile = filepath
+    fortest = True
 
 
 CreatePythonData()
@@ -63,16 +66,47 @@ def AppendPythonData(pythonDataFile):
         newfile.close()
 
 def UsePythonData(codeName):
-    if codeName != "":
-        try:
-            #this works, but requires file to be in the same folder
-            module = importlib.import_module(codeName)
-            print("fin")
-        except:
-            print("failure")
-            return
+    global fortest
+
+    if fortest == True:
+        #might not be necessary
+        data = codeName
+        
+        file = open(data,'r')#r?
+        if codeName != "":
+            for line in file: 
+                try:
+                    '''
+                    import sys 
+                    import os
+                    sys.path.append(os.path.abspath("/home/el/foo4/stuff"))
+                    from riaa import *
+                    watchout()
+                    '''
+
+                #line would be "/Users/aidan/Desktop/file.py"
+                
+                    importline = os.path.dirname(os.path.abspath(line))
+                    modulename = os.path.basename(line)
+                    
+                    print(importline)
+                    sys.path.append(os.path.abspath(importline))
+                    module = importlib.import_module(modulename)
+                    print("fin")
+                except:
+                    print("failure")
+                    return
+def TESTING():
+    '''
+    line = "/Users/aidan/Desktop/file.py"
+    importline = os.path.dirname(os.path.abspath(line))
+    print(importline)
+    '''
+CreatePythonData()
+AppendPythonData(pythonDataFile)
+#UsePythonData("GameRandomizer.py")
     
-#CreatePythonData()
+UsePythonData(pythonDataFile)
+
 #AppendPythonData(pythonDataFile)
-UsePythonData("GameRandomizer.py")
-#AppendPythonData(pythonDataFile)
+#TESTING()
