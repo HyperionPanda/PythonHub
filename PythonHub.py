@@ -1,6 +1,7 @@
 import os
 import sys
 import importlib
+import shutil
 # for importing at runtime
 
 #https://stackoverflow.com/questions/301134/how-to-import-a-module-given-its-name-as-string
@@ -8,10 +9,40 @@ import importlib
 
 fortest = False
 pythonDataFile = ""
+CLEAN = set()
 
-print("Welcome to the PythonHub, where all your python code can be run. In the input below, please include a file you want to be able to be imported and a description Otherwise, use the use section to use some code")
+print("Welcome to the PythonHub, where all your python code can be run. In the input below, please include a file you want to be able to be imported and a description Otherwise, use the use section to use some code\n")
 
+#connect all the python files
 
+def Interface():
+    global pythonDataFile
+    
+    print("This is PythonHub, which allows you to import and use all your python files\n")
+    print("Please put input if you would like to save new files for import\n")
+    print("Please put use if you would like to use any saved files\n")
+    print("Please put exit if you would like to quit\n")
+    
+    destination = str(input())
+    if destination == "input":
+        CreatePythonData()
+        AppendPythonData(pythonDataFile)
+
+        #go back after creating file
+        Interface()
+        
+    elif destination == "use":
+        UsePythonData(pythonDataFile)
+
+        #go back after using files
+        Interface()
+
+    
+    elif destination == "exit": #works
+        quit
+    else:
+        Interface()
+        
 
 #create the file meant to remember the python files
 
@@ -67,12 +98,14 @@ def AppendPythonData(pythonDataFile):
 
 def UsePythonData(codeName):
     global fortest
+    global CLEAN
+    cleanup = "__pycache__"
 
     if fortest == True:
         #might not be necessary
         data = codeName
         
-        file = open(data,'r')#r?
+        file = open(data,'r')
         if codeName != "":
             for line in file: 
                 try:
@@ -85,23 +118,51 @@ def UsePythonData(codeName):
                     '''
 
                 #line would be "/Users/aidan/Desktop/file.py"
-                
+                   
+                    print(line)
                     importline = os.path.dirname(os.path.abspath(line))
+                    #print(importline)
                     modulename = os.path.basename(line)
+                    #print(modulename)
                     
-                    print(importline)
+                    CLEAN.add(importline+"/"+cleanup)
+                    
+                   
                     sys.path.append(os.path.abspath(importline))
-                    module = importlib.import_module(modulename)
                     print("fin")
+                    module = importlib.import_module(modulename)
+                    
                 except:
-                    print("failure")
-                    return
+                    print(line+" failure")
+                    break
+    #clean up the __pycache__ file
+    if CLEAN:
+        for paths in CLEAN:
+            
+            try:
+                print("\nBeginning Cleaning\n")
+                sys.path.append(os.path.abspath(paths))
+                shutil.rmtree(paths)
+            except:
+                print("For "+paths+" "+cleanup+" does not exist")
+            
+
+                
 def TESTING():
+    path = "/Users/aidan/Desktop/__pycache__"
+    try:
+        print("\nBeginning Cleaning\n")
+        sys.path.append(os.path.abspath(path))
+        shutil.rmtree(path)
+        print("\Finished Cleaning\n")
+    except:
+        print("For "+path+" __pycache__ does not exist")
     '''
     line = "/Users/aidan/Desktop/file.py"
     importline = os.path.dirname(os.path.abspath(line))
     print(importline)
     '''
+'''
 CreatePythonData()
 AppendPythonData(pythonDataFile)
 #UsePythonData("GameRandomizer.py")
@@ -109,4 +170,7 @@ AppendPythonData(pythonDataFile)
 UsePythonData(pythonDataFile)
 
 #AppendPythonData(pythonDataFile)
+
 #TESTING()
+'''
+Interface()
