@@ -13,20 +13,45 @@ CLEAN = set()
 
 print("Welcome to the PythonHub, where all your python code can be run. In the input below, please include a file you want to be able to be imported and a description Otherwise, use the use section to use some code\n")
 
+
+
+
+
+
+#Allow to select a file
+
+
+
+
+
+
 #connect all the python files
 
 def Interface():
     global pythonDataFile
-    
-    print("This is PythonHub, which allows you to import and use all your python files\n")
+    currentline = 0
+    print("\nThis is PythonHub, which allows you to import and use all your python files\n")
     print("Please put input if you would like to save new files for import\n")
     print("Please put use if you would like to use any saved files\n")
     print("Please put exit if you would like to quit\n")
+
+    
     
     destination = str(input())
     if destination == "input":
         CreatePythonData()
         AppendPythonData(pythonDataFile)
+
+        newfile = open(pythonDataFile,'r')
+    
+        for line in newfile:
+            print(line+"\n")
+            if line.startswith("Name: "):
+                    currentline +=1
+                
+
+        print("There are currently "+str(currentline)+" files saved")
+        newfile.close()
 
         #go back after creating file
         Interface()
@@ -49,21 +74,24 @@ def Interface():
 def CreatePythonData():
     global pythonDataFile
     global fortest
+    
     directorypath = os.getcwd()
     
     filepath = os.path.join(str(directorypath), 'PythonFiles.txt')
 
-    #for if directory does not exist
+    #if directory does not exist
     '''
         if not os.path.exists(str(directorypath)):
             os.makedirs('c:/your/full/path')
         f = open(filepath, "a")
     '''
     newfile = open(filepath,'a')
+    newfile.close()
+
+    
     
 
     
-    newfile.close()
     pythonDataFile = filepath
     fortest = True
 
@@ -82,11 +110,11 @@ def AppendPythonData(pythonDataFile):
             #what is path of the file (to call from)
             filename = str(input("Name of file meant to save (put whole path): "))
             if filename != "exit":
-                newfile.write(filename+"\n")
+                newfile.write("Name: "+filename+"\n")
                 #what is description of file (for future uses)
                 description = str(input("What is the description of the file? "))
                 if description != "exit":
-                    newfile.write(description+"\n")
+                    newfile.write("Description: "+description+"\n")
                 #if exit typed
                 else:
                     break
@@ -130,7 +158,11 @@ def UsePythonData(codeName):
                    
                     sys.path.append(os.path.abspath(importline))
                     print("fin")
+
+                   
+                   
                     module = importlib.import_module(modulename)
+                    
                     
                 except:
                     print(line+" failure")
