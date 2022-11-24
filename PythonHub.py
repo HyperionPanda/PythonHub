@@ -18,7 +18,7 @@ print("Welcome to the PythonHub, where all your python code can be run. In the i
 
 
 
-#Allow to select a file
+#Test that selection works
 
 
 
@@ -29,16 +29,15 @@ print("Welcome to the PythonHub, where all your python code can be run. In the i
 
 def Interface():
     global pythonDataFile
-    currentline = 0
-    print("\nThis is PythonHub, which allows you to import and use all your python files\n")
-    print("Please put input if you would like to save new files for import\n")
-    print("Please put use if you would like to use any saved files\n")
-    print("Please put exit if you would like to quit\n")
+    currentFileLine = 0
+    print("\nThis is PythonHub, which allows you to import and use all your python files","Please put input if you would like to save new files for import\n","Please put use if you would like to use any saved files,Please put exit if you would like to quit\n")
 
     
     
-    destination = str(input())
-    if destination == "input":
+    destination = str(input(">> "))
+    checkdest = destination.split()
+    
+    if checkdest[0] == "input":
         CreatePythonData()
         AppendPythonData(pythonDataFile)
 
@@ -47,18 +46,20 @@ def Interface():
         for line in newfile:
             print(line+"\n")
             if line.startswith("Name: "):
-                    currentline +=1
+                    currentFileLine +=1
                 
 
-        print("There are currently "+str(currentline)+" files saved")
+        print("There are currently "+str(currentFileLine)+" files saved")
         newfile.close()
 
         #go back after creating file
         Interface()
         
-    elif destination == "use":
-        UsePythonData(pythonDataFile)
-
+    elif checkdest[0] == "use":
+        
+        #UsePythonData(pythonDataFile,checkdest[1])
+        areYouSure(pythonDataFile,checkdest[1])
+        
         #go back after using files
         Interface()
 
@@ -96,7 +97,7 @@ def CreatePythonData():
     fortest = True
 
 
-CreatePythonData()
+###CreatePythonData()
 
 # add files to the data file  
 def AppendPythonData(pythonDataFile):
@@ -124,50 +125,89 @@ def AppendPythonData(pythonDataFile):
             
         newfile.close()
 
-def UsePythonData(codeName):
+def areYouSure(dataFile,desiredFile):
+    global fortest
+    isFile = False
+    description = ""
+    desired = ""
+    if fortest:
+        data = dataFile
+        file = open(data,"r")
+        for line in file:
+            if isFile:
+                description = line
+                break
+            if os.path.basename(line).strip() == desiredFile:
+                desired = line
+                isFile = True
+            
+        
+        print("Are you sure you would like to use the file "+ desired + "?\n")
+        print(description)
+        print("\n Yes or No?")
+        file.close()
+        response = str(input(">> "))
+        
+        if response.upper() == "YES":
+            UsePythonData(dataFile,desiredFile)
+    
+        
+
+def UsePythonData(dataFile,desiredFile):
     global fortest
     global CLEAN
+    success = False
     cleanup = "__pycache__"
 
-    if fortest == True:
+    #does the file holding the program exist?
+    if fortest:
+
         #might not be necessary
-        data = codeName
+        data = dataFile
         
         file = open(data,'r')
-        if codeName != "":
-            for line in file: 
-                try:
-                    '''
-                    import sys 
-                    import os
-                    sys.path.append(os.path.abspath("/home/el/foo4/stuff"))
-                    from riaa import *
-                    watchout()
-                    '''
-
+        if dataFile != "":
+          
+            for line in file:
                 #line would be "/Users/aidan/Desktop/file.py"
-                   
-                    print(line)
-                    importline = os.path.dirname(os.path.abspath(line))
-                    #print(importline)
-                    modulename = os.path.basename(line)
-                    #print(modulename)
+                
+                if (os.path.basename(line)).strip() == desiredFile:
+                 
+                    try:
+                        '''
+                        import sys 
+                        import os
+                        sys.path.append(os.path.abspath("/home/el/foo4/stuff"))
+                        from riaa import *
+                        watchout()
+                        '''
+
+                
+                        cleanLine = line.replace("Name: ","")
+                        print(cleanLine)
+                        importline = os.path.dirname(os.path.abspath(cleanLine))
+                        #print(importline)
+                        modulename = os.path.basename(cleanLine)
+                        #print(modulename)
                     
-                    CLEAN.add(importline+"/"+cleanup)
+                        CLEAN.add(importline+"/"+cleanup)
                     
                    
-                    sys.path.append(os.path.abspath(importline))
-                    print("fin")
+                        sys.path.append(os.path.abspath(importline))
+                        #print("fin")
 
                    
                    
-                    module = importlib.import_module(modulename)
+                        module = importlib.import_module(modulename)
+                           
                     
+                    except:
+                        #print(cleanLine+" failure")
+                        file.close()
+                        print("finished")
+                        break
                     
-                except:
-                    print(line+" failure")
-                    break
-    #clean up the __pycache__ file
+    #clean up the __pycache__ file whereever it is created
     if CLEAN:
         for paths in CLEAN:
             
