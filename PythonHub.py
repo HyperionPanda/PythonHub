@@ -1,6 +1,7 @@
 import os
 import sys
 import importlib
+import importlib.util
 import shutil
 
 # for importing at runtime
@@ -28,6 +29,7 @@ import shutil
 fortest = False
 pythonDataFile = ""
 CLEAN = set()
+reloader = set()
 
 #connect all the python files
 def Interface():
@@ -66,7 +68,7 @@ def Interface():
         Interface()
 
     
-    elif destination == "exit": #works
+    elif destination == "exit":
         quit
     else:
         Interface()
@@ -114,10 +116,11 @@ def AppendPythonData(pythonDataFile):
             filename = str(input("Name of file meant to save (put whole path): "))
             if filename != "exit":
                 newfile.write(filename+"\n")
+
                 #what is description of file (for future uses)
                 description = str(input("What is the description of the file? "))
                 if description != "exit":
-                    newfile.write(description+"\n")
+                    newfile.write(description)
                     newfile.write("\n")
                 #if exit typed
                 else:
@@ -131,7 +134,9 @@ def AppendPythonData(pythonDataFile):
 def UsePythonData(codeName):
     global fortest
     global CLEAN
+
     cleanup = "__pycache__"
+
 
     if fortest == True:
         #might not be necessary
@@ -139,40 +144,52 @@ def UsePythonData(codeName):
         
         file = open(data,'r')
         if codeName != "":
-            for line in file: 
+            for line in file:
+
                 try:
-                    '''
-                    import sys 
-                    import os
-                    sys.path.append(os.path.abspath("/home/el/foo4/stuff"))
-                    from riaa import *
-                    watchout()
-                    '''
+                    
+                    #import sys 
+                    #import os
+                    #sys.path.append(os.path.abspath("/home/el/foo4/stuff"))
+                    #from riaa import *
+                    #watchout()
+                    
 
                 #line would be "/Users/aidan/Desktop/file.py"
                    
-
+                    '''
                     importline = os.path.dirname(line)
-                    print(importline)
+
                     modulename = os.path.basename(line)
-                    
+
                     CLEAN.add(importline+"/"+cleanup)
                     
                    
                     sys.path.append(importline)
-                    print("fin")
-
-                   
-
-                    importlib.import_module(modulename)
-
-                    
+                    module = importlib.import_module(modulename)
+                    '''
+                    print("Works1")
+                    importline = os.path.dirname(line)
+                    modulename = os.path.basename(line)
+                    print("Works2")
+                    #sys.path.append(importline)
+                    spec = importlib.util.spec_from_file_location('GameRandomizer','/Users/aidan/Desktop/GameRandomizer.py')
+                    print("Works2.5")
+                    print(spec)
+                    foo = importlib.util.module_from_spec(spec)
+                    print("Works3")
+                    sys.modules[modulename] = foo
+                    spec.loader.exec_module(foo)
+                    foo.GameRandomizer()
+                    print(foo)
+                    print("Works4")
                     
                 except Exception as e:
+                    importlib.invalidate_caches()
                     print(e)
                     print("\n"+line+" failure")
-                    return
-                    break
+                    quit
+
     #clean up the __pycache__ file
     if CLEAN:
         for paths in CLEAN:
