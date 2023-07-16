@@ -43,6 +43,7 @@ def Interface():
     
     
     destination = str(input())
+    destination = destination.split()
     if destination == "input":
         CreatePythonData()
         AppendPythonData(pythonDataFile)
@@ -60,9 +61,12 @@ def Interface():
 
         #go back after creating file
         Interface()
-        
-    elif destination == "use":
-        UsePythonData(pythonDataFile)
+
+    elif destination[0] == "use":
+        if destination[1] != "":
+            UsePythonData(pythonDataFile, destination[1])
+        else:
+            print("Error, no file specified")
 
         #go back after using files
         Interface()
@@ -131,7 +135,7 @@ def AppendPythonData(pythonDataFile):
             
         newfile.close()
 
-def UsePythonData(codeName):
+def UsePythonData(old_file,codeName):
     global fortest
     global CLEAN
 
@@ -140,55 +144,42 @@ def UsePythonData(codeName):
 
     if fortest == True:
         #might not be necessary
-        data = codeName
+        data = old_file
         
         file = open(data,'r')
-        if codeName != "":
+        if file != "":
             for line in file:
+                module = os.path.basename(line)
 
-                try:
-                    
-                    #import sys 
-                    #import os
-                    #sys.path.append(os.path.abspath("/home/el/foo4/stuff"))
-                    #from riaa import *
-                    #watchout()
-                    
+                module = "".join(module.split())
+                if module == codeName:
 
-                #line would be "/Users/aidan/Desktop/file.py"
-                   
-                    '''
-                    importline = os.path.dirname(line)
+                    try:
 
-                    modulename = os.path.basename(line)
 
-                    CLEAN.add(importline+"/"+cleanup)
-                    
-                   
-                    sys.path.append(importline)
-                    module = importlib.import_module(modulename)
-                    '''
-                    print("Works1")
-                    importline = os.path.dirname(line)
-                    modulename = os.path.basename(line)
-                    print("Works2")
-                    #sys.path.append(importline)
-                    spec = importlib.util.spec_from_file_location('GameRandomizer','/Users/aidan/Desktop/GameRandomizer.py')
-                    print("Works2.5")
-                    print(spec)
-                    foo = importlib.util.module_from_spec(spec)
-                    print("Works3")
-                    sys.modules[modulename] = foo
-                    spec.loader.exec_module(foo)
-                    foo.GameRandomizer()
-                    print(foo)
-                    print("Works4")
-                    
-                except Exception as e:
-                    importlib.invalidate_caches()
-                    print(e)
-                    print("\n"+line+" failure")
-                    quit
+                        #line would be "/Users/aidan/Desktop/file.py"
+
+
+                        importline = os.path.dirname(line)
+                        modulename = os.path.basename(line)
+                        CLEAN.add(importline + "/" + cleanup)
+                        #sys.path.append(importline)
+                        spec = importlib.util.spec_from_file_location('GameRandomizer','/Users/aidan/Desktop/GameRandomizer.py')
+                        #print(spec)
+                        foo = importlib.util.module_from_spec(spec)
+                        sys.modules[modulename] = foo
+                        spec.loader.exec_module(foo)
+                        #foo.GameRandomizer()
+                        #print(foo)
+
+
+                    except Exception as e:
+                        importlib.invalidate_caches()
+                        print(e)
+                        print("\n"+line+" failure")
+                        quit
+                else:
+                    print("No")
 
     #clean up the __pycache__ file
     if CLEAN:
