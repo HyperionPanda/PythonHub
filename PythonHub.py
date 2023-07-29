@@ -3,6 +3,7 @@ import sys
 import importlib
 import importlib.util
 import shutil
+import control_File
 
 # for importing at runtime
 
@@ -13,28 +14,19 @@ import shutil
 #print("Welcome to the PythonHub, where all your python code can be run. In the input below, please include a file you want to be able to be imported and a description Otherwise, use the use section to use some code\n")
 
 
-
-
-
-
 #Allow to select a file
 
 
-
-
-
-
-
-
 fortest = False
-pythonDataFile = ""
+python_file = ""
 CLEAN = set()
 reloader = set()
 
 #connect all the python files
 def Interface():
-    global pythonDataFile
-    currentline = 0
+    global python_file
+    global fortest
+    currentline = 1
     print("\nThis is PythonHub, which allows you to import and use all your python files\n")
     print("Please put input if you would like to save new files for import\n")
     print("Please put use if you would like to use any saved files\n")
@@ -44,12 +36,13 @@ def Interface():
     
     destination = str(input())
     destination = destination.split()
-    if destination == "input":
-        CreatePythonData()
-        AppendPythonData(pythonDataFile)
 
-        newfile = open(pythonDataFile,'r')
-    
+    if destination[0] == "input":
+        python_file = control_File.create_python_Data()
+        fortest = True
+        control_File.add_to_File(python_file)
+
+        newfile = open(python_file,'r')
         for line in newfile:
             print(line+"\n")
             if line.startswith("Name: "):
@@ -64,7 +57,7 @@ def Interface():
 
     elif destination[0] == "use":
         if destination[1] != "":
-            UsePythonData(pythonDataFile, destination[1])
+            import_Program(python_file, destination[1])
         else:
             print("Error, no file specified")
 
@@ -72,70 +65,13 @@ def Interface():
         Interface()
 
     
-    elif destination == "exit":
+    elif destination[0] == "exit":
         quit
     else:
         Interface()
-        
-
-#create the file meant to remember the python files
-
-def CreatePythonData():
-    global pythonDataFile
-    global fortest
-    
-    directorypath = os.getcwd()
-    
-    filepath = os.path.join(str(directorypath), 'PythonFiles.txt')
-
-    #if directory does not exist
-    '''
-        if not os.path.exists(str(directorypath)):
-            os.makedirs('c:/your/full/path')
-        f = open(filepath, "a")
-    '''
-    newfile = open(filepath,'a')
-    newfile.close()
-
-    
-    
-
-    
-    pythonDataFile = filepath
-    fortest = True
 
 
-CreatePythonData()
-
-# add files to the data file  
-def AppendPythonData(pythonDataFile):
-    data = pythonDataFile
-
-    if data != "":
-        #if file exists, open it
-        newfile = open(data,'a')
-        print("Type exit to stop")
-        while True:
-            #what is path of the file (to call from)
-            filename = str(input("Name of file meant to save (put whole path): "))
-            if filename != "exit":
-                newfile.write(filename+"\n")
-
-                #what is description of file (for future uses)
-                description = str(input("What is the description of the file? "))
-                if description != "exit":
-                    newfile.write(description)
-                    newfile.write("\n")
-                #if exit typed
-                else:
-                    break
-            #if exit typed
-            else:
-                break
-            
-        newfile.close()
-
-def UsePythonData(old_file,codeName):
+def import_Program(old_file,codeName):
     global fortest
     global CLEAN
 
@@ -189,34 +125,9 @@ def UsePythonData(old_file,codeName):
                 print("\nBeginning Cleaning\n")
                 sys.path.append(os.path.abspath(paths))
                 shutil.rmtree(paths)
+                print("\nFinished Cleaning\n")
             except:
                 print("For "+paths+" "+cleanup+" does not exist")
             
 
-                
-def TESTING():
-    path = "/Users/aidan/Desktop/__pycache__"
-    try:
-        print("\nBeginning Cleaning\n")
-        sys.path.append(os.path.abspath(path))
-        shutil.rmtree(path)
-        print("\Finished Cleaning\n")
-    except:
-        print("For "+path+" __pycache__ does not exist")
-    '''
-    line = "/Users/aidan/Desktop/file.py"
-    importline = os.path.dirname(os.path.abspath(line))
-    print(importline)
-    '''
-'''
-CreatePythonData()
-AppendPythonData(pythonDataFile)
-#UsePythonData("GameRandomizer.py")
-    
-UsePythonData(pythonDataFile)
-
-#AppendPythonData(pythonDataFile)
-
-#TESTING()
-'''
 Interface()
