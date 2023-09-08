@@ -1,2 +1,0 @@
-/Users/aidan/Desktop/GameRandomizer.py
-file2
