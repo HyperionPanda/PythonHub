@@ -3,7 +3,6 @@ import os
 #create the file meant to remember the python files
 def create_python_Data():
     pythonDataFile = ""
-    fortest = False
 
     directory_path = os.getcwd()
 
@@ -19,7 +18,6 @@ def create_python_Data():
     newfile.close()
 
     pythonDataFile = filepath
-    fortest = True
     return filepath
 
 
@@ -49,4 +47,21 @@ def add_to_File (existing_file):
             else:
                 break
         append_file.close()
+
+def view_File():
+
+    count = 1
+    directory_path = os.getcwd()
+    filepath = os.path.join(str(directory_path), 'PythonFiles.txt')
+
+    view_file =  open(filepath, 'r')
+    print("\n")
+
+    for line in view_file:
+        if count%2 == 0:
+            print("\t" + line)
+        else:
+            print(line)
+
+        count += 1
 

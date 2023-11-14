@@ -11,6 +11,7 @@ def Interface():
 
     print("Please put input if you would like to save new files for import\n")
     print("Please put use if you would like to use any saved files\n")
+    print("Please put view if you would like to view what files are saved\n")
     print("Please put exit if you would like to quit\n")
 
     command = str(input())
@@ -46,7 +47,10 @@ def Interface():
         # go back after using files
         return 1
 
+    elif command[0] == "view":
+        return 2
+
     elif command[0] == "exit":
         return 0
-        #quit
+
 
