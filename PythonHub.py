@@ -3,66 +3,51 @@ import sys
 import importlib
 import importlib.util
 import shutil
-import control_File
 
 # for importing at runtime
 
 #https://stackoverflow.com/questions/301134/how-to-import-a-module-given-its-name-as-string
 #https://docs.python.org/3/library/importlib.html#importlib.import_module
 
-
-#print("Welcome to the PythonHub, where all your python code can be run. In the input below, please include a file you want to be able to be imported and a description Otherwise, use the use section to use some code\n")
-
-
-#Allow to select a file
-
-python_file = ""
-CLEAN = set()
-reloader = set()
-
 #connect all the python files
 
-def import_Program(old_file,codeName):
-
+def import_Program(old_file,selected_Module):
+    python_file = ""
+    CLEAN = set()
     cleanup = "__pycache__"
 
-    #might not be necessary
-    data = old_file
-
-    file = open(data,'r')
+    file = open(old_file,'r')
     if file != "":
         for line in file:
             module = os.path.basename(line)
 
             module = "".join(module.split())
-            if module == codeName:
+            if module == selected_Module:
 
                 try:
 
 
                     #line would be "/Users/aidan/Desktop/file.py"
 
+                    #put together the path and add to the clean set so that the file is cleaned of __pycache__
 
-                    importline = os.path.dirname(line)
-                    modulename = os.path.basename(line)
-                    CLEAN.add(importline + "/" + cleanup)
-                    #sys.path.append(importline)
-                    spec = importlib.util.spec_from_file_location('GameRandomizer','/Users/aidan/Desktop/GameRandomizer.py')
-                    #print(spec)
+                    import_path = os.path.dirname(line)
+                    #module.py
+                    module_name = str(os.path.basename(line))
+                    full_path = str(import_path+'/'+module_name)
+                    CLEAN.add(import_path + "/" + cleanup)
+
+                    #name should be file name without .py, location should be full path with the selected file.py at the end
+                    spec = importlib.util.spec_from_file_location(module_name, full_path.strip())
                     foo = importlib.util.module_from_spec(spec)
-                    sys.modules[modulename] = foo
+                    sys.modules[module_name] = foo
                     spec.loader.exec_module(foo)
-                    #foo.GameRandomizer()
-                    #print(foo)
 
 
                 except Exception as e:
                     importlib.invalidate_caches()
                     print(e)
                     print("\n"+line+" failure")
-                    quit
-            else:
-                print("No")
 
     #clean up the __pycache__ file
     if CLEAN:

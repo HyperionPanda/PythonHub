@@ -14,8 +14,8 @@ def Interface():
     print("Please put view if you would like to view what files are saved\n")
     print("Please put exit if you would like to quit\n")
 
-    command = str(input())
-    command = command.split()
+    command = (str(input())).split()
+    #command = command.split()
 
     if command[0] == "input":
 
@@ -35,13 +35,10 @@ def Interface():
         return 1
 
     elif command[0] == "use":
-
-        if command[1] != "":
-
+        try:
             hub.import_Program(python_file, command[1])
-
-        else:
-            print("Error, no file specified")
+        except:
+            print("Error, no file specified\n")
             return 1
 
         # go back after using files
