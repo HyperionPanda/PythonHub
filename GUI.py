@@ -1,5 +1,6 @@
 import tkinter as tk
 import PythonHub
+
 window = tk.Tk()
 
 window.title("Test Window")
