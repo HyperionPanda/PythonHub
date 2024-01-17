@@ -8,6 +8,13 @@ window.title("Test Window")
 #sets the basic window geometry
 window.geometry("300x200")
 
+#resize window based on the number of files present
+def windowSet(file_number):
+    if file_number <100:
+        new_height = ""
+        new_width = ""
+        window.configure(height= "300",width="200")
+
 #Creates a header/label for the window
 header = tk.Label(window,text="PythonHub")
 header.grid()

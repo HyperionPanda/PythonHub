@@ -1,10 +1,5 @@
 import control_File as control
 import PythonHub as hub
-
-print("\nThis is PythonHub, which allows you to import and use all your python files\n")
-
-
-
 def Interface():
 
     python_file = control.create_python_Data()
