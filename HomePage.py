@@ -27,7 +27,8 @@ exitScreen = tk.Frame(window)
 exitScreen.pack(side = "right",padx = 50, expand = True)
 
 def enterHub():
-    gui.run()
+    Object = gui.Main()
+    Object.run()
     window.destroy()
 
 
